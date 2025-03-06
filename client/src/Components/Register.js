@@ -7,6 +7,8 @@ import { userSchemaValidation } from "./Validations/UserValidations";
 import { useForm, useFormState } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useSelector } from "react-redux";
+
 const Register = () => {
   const {
     register,
@@ -18,6 +20,9 @@ const Register = () => {
   const onSubmit = (data) => {
     console.log("Form Data", data); // You can handle the form submission here
   };
+
+  const userList = useSelector((state) => state.users.value);
+
   return (
     <div>
       <Container className="div-form">
@@ -71,6 +76,22 @@ const Register = () => {
             </p>
           </Row>
         </Form>
+        <Row>
+          <Col md={6}>
+            List of users
+            <table className="table">
+              <tbody>
+                {userList.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.password}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Col>
+        </Row>
       </Container>
     </div>
   );
