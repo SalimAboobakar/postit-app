@@ -9,7 +9,9 @@ export const userSlice = createSlice({
     addUser: (state, action) => {
       state.value.push(action.payload); //add the payload to the state
     },
-    deleteUser: (state, action) => {},
+    deleteUser: (state, action) => {
+      state.value = state.value.filter((user) => user.email !== action.payload);
+    },
     updateUser: (state, action) => {},
   },
 });
