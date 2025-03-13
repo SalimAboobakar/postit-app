@@ -8,8 +8,9 @@ import { useForm, useFormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 
-import { addUser, deleteUser } from "../Features/UserSlice";
+import { addUser, deleteUser, updateUser } from "../Features/UserSlice";
 import { useSelector, useDispatch } from "react-redux";
+import UpdateUser from "./UpdateUser";
 
 const Register = () => {
   const {
@@ -28,11 +29,16 @@ const Register = () => {
   const [password, setpassword] = useState("");
 
   const [confirmPassword, setconfirmPassword] = useState("");
-
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const dispatch = useDispatch();
   const handleDelete = (email) => {
     dispatch(deleteUser(email));
   };
+
   const onSubmit = (data) => {
     try {
       const userData = {
@@ -140,7 +146,9 @@ const Register = () => {
                       </Button>
                     </td>
                     <td>
-                      <button className="btn btn-primary">update</button>
+                      <Link to="/update">
+                        <Button type="submit">Update</Button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

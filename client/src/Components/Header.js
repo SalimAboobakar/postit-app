@@ -42,6 +42,9 @@ function Header(args) {
           <NavItem>
             <Link to="/register">Register</Link>
           </NavItem>
+          <NavItem>
+            <Link to="/update">Update</Link>
+          </NavItem>
         </Nav>
       </Navbar>
     </>
