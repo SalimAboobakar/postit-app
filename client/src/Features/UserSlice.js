@@ -1,7 +1,31 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { UsersData } from "../Exampledata";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+//import { UsersData } from "../Exampledata";
+import axios from "axios";
+const initialState = {
+  user: {},
+  isLoading: false,
+  isSuccess: false,
+  isError: false,
+};
 
-const initialState = { value: UsersData };
+export const registerUser = createAsyncThunk(
+  "users/registerUser",
+  async (usersData) => {
+    try {
+      const response = await axios.post("http://localhost:3001/registerUser", {
+        name: usersData.name,
+        email: usersData.email,
+        password: usersData.password,
+      });
+      console.log(response);
+      const user = response.data.user; //retrieve the response from the server
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "users",
   initialState,
@@ -20,6 +44,18 @@ export const userSlice = createSlice({
         }
       });
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isSuccess = true;
+      })
+      .addCase(registerUser.rejected, (state) => {
+        state.isError = true;
+      });
   },
 });
 

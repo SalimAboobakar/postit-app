@@ -11,6 +11,8 @@ import { useState } from "react";
 import { addUser, deleteUser, updateUser } from "../Features/UserSlice";
 import { useSelector, useDispatch } from "react-redux";
 import UpdateUser from "./UpdateUser";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../Features/UserSlice";
 
 const Register = () => {
   const {
@@ -35,6 +37,9 @@ const Register = () => {
     password: "",
   });
   const dispatch = useDispatch();
+
+  const navigate = useNavigate(); //declares a constant variable named navigate and assigns it the value returned by the useNavigate() hook.
+
   const handleDelete = (email) => {
     dispatch(deleteUser(email));
   };
@@ -48,7 +53,8 @@ const Register = () => {
       };
       console.log("Form Data", data);
       alert("Validation all good.");
-      dispatch(addUser(userData));
+      dispatch(registerUser(userData));
+      navigate("/login");
     } catch (error) {
       console.log("Error.");
     }
@@ -130,7 +136,7 @@ const Register = () => {
             </p>
           </Row>
         </Form>
-        <Row>
+        {/* <Row>
           <Col md={6}>
             List of users
             <table className="table">
@@ -155,7 +161,7 @@ const Register = () => {
               </tbody>
             </table>
           </Col>
-        </Row>
+        </Row> */}
       </Container>
     </div>
   );
