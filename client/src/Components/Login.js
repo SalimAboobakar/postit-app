@@ -6,7 +6,15 @@ import { useForm, useFormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userSchemaValidation } from "./Validations/UserValidations";
 import Register from "./Register";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../Features/UserSlice";
 const Login = () => {
+  const [email, setemail] = useState("");
+
+  const [password, setpassword] = useState("");
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -16,6 +24,17 @@ const Login = () => {
   const onSubmit = (data) => {
     console.log("Form");
   };
+  const handleLogin = () => {
+    const userData = {
+      email: email,
+
+      password: password,
+    };
+    dispatch(login(userData));
+  };
+
+  //dispatch a login action from the user slice.
+
   return (
     <div>
       <Container>
@@ -26,14 +45,17 @@ const Login = () => {
 
           <Row>
             e-mail <br />
-            <input type="text" {...register("email")} />
+            <input type="text" onChange={(e) => setemail(e.target.value)} />
             <Col md={3}></Col>
             <p className="error">{errors.email?.message}</p>
           </Row>
           <br />
           <Row>
             password <br />
-            <input type="text" {...register("password")}></input>
+            <input
+              type="text"
+              onChange={(e) => setpassword(e.target.value)}
+            ></input>
             <Col md={3}></Col>
             <p className="error">{errors.password?.message}</p>
           </Row>
@@ -41,7 +63,13 @@ const Login = () => {
           <Row>
             <br />
             <Col md={3}></Col>
-            <Button>login</Button>
+            <Button
+              color="primary"
+              className="button"
+              onClick={() => handleLogin()}
+            >
+              Sign in
+            </Button>
             <p className="smalltext">
               No Account? <Link to="/register">Sign Up now.</Link>
             </p>

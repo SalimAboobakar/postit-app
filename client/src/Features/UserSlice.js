@@ -25,6 +25,29 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
+export const login = createAsyncThunk("users/login", async (userData) => {
+  try {
+    const response = await axios.post("http://localhost:3001/login", {
+      email: userData.email,
+
+      password: userData.password,
+    });
+
+    const user = response.data.user;
+
+    console.log(response);
+
+    return user;
+  } catch (error) {
+    //handle the error
+
+    const errorMessage = "Invalid credentials";
+
+    alert(errorMessage);
+
+    throw new Error(errorMessage);
+  }
+});
 
 export const userSlice = createSlice({
   name: "users",
@@ -47,13 +70,21 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
+      .addCase(login.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload; //assign the payload which is the user object return from the server after authentication
+
+        state.isLoading = false;
+
         state.isSuccess = true;
       })
-      .addCase(registerUser.rejected, (state) => {
+
+      .addCase(login.rejected, (state) => {
+        state.isLoading = false;
+
         state.isError = true;
       });
   },
