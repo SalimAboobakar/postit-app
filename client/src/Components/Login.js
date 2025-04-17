@@ -9,11 +9,20 @@ import Register from "./Register";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Features/UserSlice";
+import { useEffect } from "react";
+import logo from "../Images/logo-t.png";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setemail] = useState("");
 
   const [password, setpassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.users.user);
+
+  const isSuccess = useSelector((state) => state.users.isSuccess);
+
+  const isError = useSelector((state) => state.users.isError);
 
   const {
     register,
@@ -32,12 +41,23 @@ const Login = () => {
     };
     dispatch(login(userData));
   };
+  useEffect(() => {
+    if (isError) {
+      navigate("/login");
+    }
 
+    if (isSuccess) {
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  }, [user, isError, isSuccess]);
   //dispatch a login action from the user slice.
 
   return (
     <div>
       <Container>
+        <img src={logo} />
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row>
             <Col md={3}></Col>

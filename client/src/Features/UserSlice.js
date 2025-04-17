@@ -48,6 +48,13 @@ export const login = createAsyncThunk("users/login", async (userData) => {
     throw new Error(errorMessage);
   }
 });
+export const logout = createAsyncThunk("/users/logout", async () => {
+  try {
+    // Send a request to your server to log the user out
+
+    const response = await axios.post("http://localhost:3001/logout");
+  } catch (error) {}
+});
 
 export const userSlice = createSlice({
   name: "users",
@@ -83,6 +90,25 @@ export const userSlice = createSlice({
       })
 
       .addCase(login.rejected, (state) => {
+        state.isLoading = false;
+
+        state.isError = true;
+      })
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+      })
+
+      .addCase(logout.fulfilled, (state) => {
+        // Clear user data or perform additional cleanup if needed
+
+        state.user = {};
+
+        state.isLoading = false;
+
+        state.isSuccess = false;
+      })
+
+      .addCase(logout.rejected, (state) => {
         state.isLoading = false;
 
         state.isError = true;
