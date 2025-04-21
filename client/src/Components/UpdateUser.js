@@ -7,11 +7,20 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../Features/UserSlice";
+import { useSelector } from "react-redux";
 
+import { useEffect } from "react";
 const UpdateUser = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const Email = useSelector((state) => state.users.user.email);
+
+  useEffect(() => {
+    if (!Email) {
+      navigate("/login");
+    }
+  }, [Email]);
 
   // Retrieve the passed user data
   const user = location.state?.user || { name: "", email: "", password: "" };
