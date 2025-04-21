@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import UserModel from "./models/UserModel.js";
 import bcrypt from "bcrypt";
+import PostModel from "./models/PostModel.js";
 const app = express();
 
 app.use(express.json());
@@ -66,6 +67,28 @@ app.post("/logout", async (req, res) => {
 });
 
 app.post("/updateProfile", async (req, res) => {});
+
+//POST API - savePost
+
+app.post("/savePost", async (req, res) => {
+  try {
+    const postMsg = req.body.postMsg;
+
+    const email = req.body.email;
+
+    const post = new PostModel({
+      postMsg: postMsg,
+
+      email: email,
+    });
+
+    await post.save();
+
+    res.send({ post: post, msg: "Added." });
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
 app.listen(3001, () => {
   console.log("You are connected thank you!");
 });

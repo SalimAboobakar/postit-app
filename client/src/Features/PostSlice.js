@@ -1,0 +1,46 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+const initialState = {
+  posts: [],
+  comments: [],
+  likes: [],
+};
+export const savePost = createAsyncThunk(
+  "/posts/savePost",
+  async (postData) => {
+    try {
+      const response = await axios.post("http://localhost:3001/savePost", {
+        postMsg: postData.postMsg,
+        email: postData.email,
+      });
+      const post = response.data.post;
+      return post; //return the new post to redux
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+const postSlice = createSlice({
+  name: "posts",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(savePost.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(savePost.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.status = "succeeded";
+        // Update the state with fetched posts adding the latest post in the beginning
+        state.posts.unshift(action.payload);
+      })
+      .addCase(savePost.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
+  },
+});
+export default postSlice.reducer;
