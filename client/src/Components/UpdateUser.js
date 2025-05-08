@@ -1,20 +1,66 @@
-import { Button } from "reactstrap";
-import { Container, Row, Col, Form } from "react-bootstrap";
-import { userSchemaValidation } from "./Validations/UserValidations";
+import loginImage from "../Images/loginImage.jpg";
+import { userSchemaValidation } from "../Validations/UserValidations";
+import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addUser } from "../Features/UserSlice";
-import { useSelector } from "react-redux";
 
+import {
+  Button,
+  Col,
+  Label,
+  Container,
+  Row,
+  FormGroup,
+  Input,
+  Form,
+} from "reactstrap";
+import logo from "../Images/logo-t.png";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { addUser, deleteUser, updateUser } from "../Features/UserSlice";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+
 const UpdateUser = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   const Email = useSelector((state) => state.users.user.email);
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(userSchemaValidation) });
+
+  const userList = useSelector((state) => state.users.value);
+
+  const [name, setname] = useState("");
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
+
+  const dispatch = useDispatch();
+  // Handle form submission
+
+  const onSubmit = (data) => {
+    console.log("Form Data", data); // You can handle the form submission here
+    try {
+      const userData = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+
+      dispatch(addUser(userData));
+      alert("User added.");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = (email) => {
+    dispatch(deleteUser(email));
+    alert("User deleted.");
+  };
 
   useEffect(() => {
     if (!Email) {
@@ -22,90 +68,71 @@ const UpdateUser = () => {
     }
   }, [Email]);
 
-  // Retrieve the passed user data
-  const user = location.state?.user || { name: "", email: "", password: "" };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(userSchemaValidation),
-    defaultValues: user,
-  });
-
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState(user.password);
-
-  const onSubmit = (data) => {
-    try {
-      const updatedUser = {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      };
-      console.log("Updated User Data:", updatedUser);
-      alert("User updated successfully.");
-      dispatch(addUser(updatedUser));
-      navigate("/"); // Redirect back to register page
-    } catch (error) {
-      console.log("Error updating user.");
-    }
-  };
-
   return (
-    <div>
-      <Container className="div-form">
-        <h2>Update User</h2>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
-            <Col md={2}></Col>
-          </Row>
-          <br />
-          <Row>
-            Name <br />
+    <Container>
+      <h1>Update User</h1>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Row>
+          <Col md={6}>
+            Name<br></br>
             <input
               type="text"
-              className="form-control"
-              id="name"
-              placeholder="Enter your name..."
-            />
-            <p className="error">{errors.name?.message}</p>
-          </Row>
-          <br />
-          <Row>
-            E-mail <br />
+              name="name"
+              {...register("name", {
+                onChange: (e) => setname(e.target.value),
+              })}
+            ></input>
+            {name}
+          </Col>
+          <p className="error">{errors.name?.message}</p>
+        </Row>
+        <Row>
+          <Col md={6}>
+            Email<br></br>
             <input
-              type="text"
-              className="form-control"
-              id="email"
-              value={email} // Email remains unchanged
-              disabled
-            />
-            <p className="error">{errors.email?.message}</p>
-          </Row>
-          <br />
-          <Row>
-            Password <br />
+              type="email"
+              name="email"
+              {...register("email", {
+                onChange: (e) => setemail(e.target.value),
+              })}
+            ></input>
+            {email}
+          </Col>
+          <p className="error">{errors.email?.message}</p>
+        </Row>
+        <Row>
+          <Col md={6}>
+            Password<br></br>
             <input
               type="password"
-              className="form-control"
-              id="password"
-              placeholder="Enter your password..."
+              name="password"
               {...register("password", {
-                onChange: (e) => setPassword(e.target.value),
+                onChange: (e) => setpassword(e.target.value),
               })}
-            />
-            <p className="error">{errors.password?.message}</p>
-          </Row>
-          <br />
-          <Row>
-            <Button type="submit">Update</Button>
-          </Row>
-        </Form>
-      </Container>
-    </div>
+            ></input>
+          </Col>
+          <p className="error">{errors.password?.message}</p>
+        </Row>
+        <Row>
+          <Col md={6}>
+            Confirm Password<br></br>
+            <input
+              type="password"
+              name="confirmpassword"
+              {...register("confirmPassword", {
+                onChange: (e) => setconfirmPassword(e.target.value),
+              })}
+            ></input>
+          </Col>
+          <p className="error">{errors.confirmPassword?.message}</p>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <Button>Update User</Button>
+          </Col>
+        </Row>
+      </Form>
+    </Container>
   );
 };
 

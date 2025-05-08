@@ -1,55 +1,30 @@
-import React, { useState } from "react";
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText,
-} from "reactstrap";
+import { Navbar, Nav, NavItem, NavLink } from "reactstrap";
 import logo from "../Images/logo-t.png";
-
 import { useDispatch } from "react-redux";
-
 import { Link, useNavigate } from "react-router-dom";
-
 import { logout } from "../Features/UserSlice";
-function Header(args) {
-  const [isOpen, setIsOpen] = useState(false);
 
-  const toggle = () => setIsOpen(!isOpen);
+const Header = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
   const handlelogout = async () => {
     dispatch(logout());
-
     //ensure that the state update from the logout action has been processed before proceeding to the next step.
-
     await new Promise((resolve) => setTimeout(resolve, 100));
-
     navigate("/login"); //redirect to login page route.
   };
+
   return (
     <>
-      <Navbar>
+      <Navbar className="header">
         <Nav>
           <NavItem>
-            <Link to="/">
-              <img src={logo} />
-            </Link>
+            <img src={logo} />
           </NavItem>
           <NavItem>
-            <NavLink active href="/login">
-              Login
-            </NavLink>
+            <Link to="/">Home</Link>
           </NavItem>
 
           <NavItem>
@@ -57,18 +32,12 @@ function Header(args) {
           </NavItem>
 
           <NavItem>
-            <Link to="/register">Register</Link>
-          </NavItem>
-          <NavItem>
-            <Link to="/update">Update</Link>
-          </NavItem>
-          <NavItem>
-            <Link onClick={handlelogout}>logout</Link>
+            <Link onClick={handlelogout}>Logout</Link>
           </NavItem>
         </Nav>
       </Navbar>
     </>
   );
-}
+};
 
 export default Header;

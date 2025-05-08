@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <footer className="footer">
-      <div>@2025. All Rights Reserved. SALIM ABOOBAKAR AL HAFIDH - 42S206</div>
+      <div>©2023.PostIT. All Rights Reserved.</div>
     </footer>
   );
 };

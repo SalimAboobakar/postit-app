@@ -1,21 +1,23 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import * as ENV from "../config.js";
 
 const initialState = {
   posts: [],
   comments: [],
   likes: [],
 };
+
 export const savePost = createAsyncThunk(
   "/posts/savePost",
   async (postData) => {
     try {
-      const response = await axios.post("http://localhost:3001/savePost", {
+      const response = await axios.post(`${ENV.SERVER_URL}/savePost`, {
         postMsg: postData.postMsg,
         email: postData.email,
       });
       const post = response.data.post;
-      return post; //return the new post to redux
+      return post; //Return the new post to Redux
     } catch (error) {
       console.log(error);
     }
@@ -24,9 +26,26 @@ export const savePost = createAsyncThunk(
 
 export const getPosts = createAsyncThunk("post/getPosts", async () => {
   try {
-    const response = await axios.get("http://localhost:3001/getPosts");
+    const response = await axios.get(`${ENV.SERVER_URL}/getPosts`);
     return response.data.posts;
     console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+});
+export const likePost = createAsyncThunk("posts/likePost", async (postData) => {
+  //console.log(postData);
+  try {
+    //Pass along the URL the postId
+    const response = await axios.put(
+      `${ENV.SERVER_URL}/likePost/${postData.postId}`,
+      {
+        userId: postData.userId,
+      }
+    );
+    const post = response.data.post;
+    console.log(post);
+    return post;
   } catch (error) {
     console.log(error);
   }
@@ -34,7 +53,7 @@ export const getPosts = createAsyncThunk("post/getPosts", async () => {
 
 const postSlice = createSlice({
   name: "posts",
-  initialState,
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -61,6 +80,25 @@ const postSlice = createSlice({
         state.posts = action.payload;
       })
       .addCase(getPosts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(likePost.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(likePost.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        //Search the post id from the posts state
+        const updatedPostIndex = state.posts.findIndex(
+          (post) => post._id === action.payload._id
+        );
+
+        //If found, update the likes property of the found post to the current value of the likes
+        if (updatedPostIndex !== -1) {
+          state.posts[updatedPostIndex].likes = action.payload.likes;
+        }
+      })
+      .addCase(likePost.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

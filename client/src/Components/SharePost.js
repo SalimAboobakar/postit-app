@@ -14,14 +14,15 @@ import { savePost } from "../Features/PostSlice";
 
 const SharePosts = () => {
   const [postMsg, setpostMsg] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const email = useSelector((state) => state.users.user.email);
+
   const handlePost = async () => {
     // Validate that postMsg is not empty
     if (!postMsg.trim()) {
       alert("Post message is required."); // Display an alert or set an error state
-
       return; // Exit the function early if validation fails
     }
     const postData = {
@@ -31,8 +32,10 @@ const SharePosts = () => {
     dispatch(savePost(postData)); // Dispatch the savePost thunk from the Posts Slice.
     setpostMsg(""); //clear the text area after posting
   };
+
   return (
-    <Container>
+    <div>
+      <h1>SharePosts</h1>
       <Row>
         <Col>
           <Input
@@ -42,12 +45,11 @@ const SharePosts = () => {
             type="textarea"
             value={postMsg}
             onChange={(e) => setpostMsg(e.target.value)}
-          />
-
+          ></Input>
           <Button onClick={() => handlePost()}>PostIT</Button>
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 };
 

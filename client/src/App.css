@@ -238,10 +238,6 @@ body {
   align-items: center; /* Vertically align items */
 }
 
-.logo {
-  height: 50px; /* Adjust the logo size as needed */
-}
-
 .nav a {
   text-decoration: none; /* Remove underline */
 
@@ -252,9 +248,4 @@ body {
 
 .nav a:hover {
   color: #007bff; /* Change color on hover (optional) */
-}
-.nav-link a {
-  color: inherit;
-
-  text-decoration: none;
 }
